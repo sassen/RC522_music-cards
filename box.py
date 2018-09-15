@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 from mpd import MPDClient
-#from readtest import *
 import re
 from CardList import CardList
-from Reader import Reader
 import sys
 import os
-
+import RPi.GPIO as GPIO
+import MFRC522
+from Reader import readCard
+import time
 
 # Capture SIGINT for cleanup when the script is aborted
 def end_read(signal,frame):
@@ -57,24 +58,26 @@ def play(client, plist):
 		print 'Could not play playlist %s' % plist
 
 
-reader = Reader()
+MIFAREReader = MFRC522.MFRC522()
 cardList = CardList()
 
 print 'Ready: place a card on top of the reader'
 
 while True:
 	try:
-		card = reader.readCard()
+		card = readCard(MIFAREReader)
 		print 'Read card', card
+
 		plist = cardList.getPlaylist(card)
-		print 'Playlist', plist
 		if plist != '':
+			print 'Playlist', plist
 			client = connectMPD()
 			if plist=='pause':
 				client.pause()
 			else:
 				play(client, plist)
 			client.close()
+		time.sleep(1)
 	except KeyboardInterrupt:
 		GPIO.cleanup()
 		sys.exit(0)

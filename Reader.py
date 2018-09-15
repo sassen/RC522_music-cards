@@ -1,8 +1,7 @@
-#!/usr/bin/env python
 import RPi.GPIO as GPIO
 import MFRC522
-MIFAREReader = MFRC522.MFRC522()
-def readCard():
+
+def readCard(MIFAREReader):
 	while True:
 		# Scan for cards
 		(status,TagType) = MIFAREReader.MFRC522_Request(MIFAREReader.PICC_REQIDL)
@@ -15,14 +14,5 @@ def readCard():
 	(status,uid) = MIFAREReader.MFRC522_Anticoll()
 	if uid:
 		#print uid
-		return uid
-
-print 'Ready: place a card on top of the reader'
-
-while True:
-	try:
-		card = readCard()
-		print card
-	except KeyboardInterrupt:
-		GPIO.cleanup()
-		sys.exit(0)
+		card = ''.join(str(i) for i in uid)
+		return card

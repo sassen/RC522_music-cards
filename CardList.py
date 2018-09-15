@@ -19,7 +19,7 @@ class CardList:
 		try:
 			return self.cardList[card]
 		except:
-			print 'Card %s is not card list' % card
+			print 'Card %s is not a stored card' % card
 			return ''
 
 	def addPlaylist(self, card, plist):
